@@ -310,6 +310,211 @@ function clearAll() {
   buildRatings();
 }
 
+// --- Claude auto-evaluation ---------------------------------------------
+
+const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
+const MODEL = "claude-opus-4-8";
+const apiKeyInput = document.querySelector("#apiKey");
+
+const SYSTEM_PROMPT = [
+  "You are an expert evaluator for an image-editing model comparison.",
+  "You are given an INPUT image, a text PROMPT describing the requested edit, and two candidate edits: RESPONSE A and RESPONSE B.",
+  "",
+  "The job has two halves that count equally:",
+  "1. Did the response make the edits the prompt actually asked for?",
+  "2. Did it leave everything the prompt did NOT mention unchanged (background, identity, pose, objects, layout, lighting)?",
+  "A response that nails the requested edits but regenerates or alters the rest of the scene has failed the task, not half-succeeded. An image edit is not a regeneration.",
+  "",
+  "Score each of the five axes by choosing exactly one of the allowed options.",
+  "Write specific notes: name the concrete edits applied and the concrete objects preserved or wrongly changed, not vague praise.",
+  "Tie the weaker response's main failure to a specific clause of the prompt.",
+  "Write the justification as 2 to 5 sentences, plain text, NO em dashes or en dashes. Lead with the verdict and its strength, then why the winner won, then the weaker response's failure tied to the prompt, then the deciding tradeoff.",
+].join("\n");
+
+const RATING_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    overall_preference: { type: "string", enum: options },
+    instruction_following: { type: "string", enum: options },
+    correctness: { type: "string", enum: options },
+    visual_quality: { type: "string", enum: options },
+    naturalness: { type: "string", enum: options },
+    winner_notes: { type: "string" },
+    loser_notes: { type: "string" },
+    tradeoff_notes: { type: "string" },
+    justification: { type: "string" },
+  },
+  required: [
+    "overall_preference",
+    "instruction_following",
+    "correctness",
+    "visual_quality",
+    "naturalness",
+    "winner_notes",
+    "loser_notes",
+    "tradeoff_notes",
+    "justification",
+  ],
+};
+
+async function toImageBlock(slotName) {
+  const slot = slots[slotName];
+  const src = slot.img.getAttribute("src");
+  if (!src) return null;
+  if (/^https?:/i.test(src)) {
+    return { type: "image", source: { type: "url", url: src } };
+  }
+  const response = await fetch(src);
+  const blob = await response.blob();
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+  const [meta, data] = String(dataUrl).split(",");
+  const mediaType = (meta.match(/data:(.*?);/) || [])[1] || blob.type || "image/png";
+  return { type: "image", source: { type: "base64", media_type: mediaType, data } };
+}
+
+function selectRatingOption(ratingName, value) {
+  state.ratings[ratingName] = value;
+  ratingRows.querySelectorAll(".rating-row").forEach((row) => {
+    const name = row.querySelector(".rating-name");
+    if (!name || name.textContent !== ratingName) return;
+    row.querySelectorAll(".rating-option").forEach((button) => {
+      button.classList.toggle("active", button.textContent === value);
+    });
+  });
+}
+
+function applyResult(result) {
+  const map = [
+    ["Overall Preference", result.overall_preference],
+    ["Instruction Following", result.instruction_following],
+    ["Correctness", result.correctness],
+    ["Visual Quality", result.visual_quality],
+    ["AI-Generated Appearance / Naturalness", result.naturalness],
+  ];
+  map.forEach(([name, value]) => {
+    if (value) selectRatingOption(name, value);
+  });
+  winnerNotes.value = result.winner_notes || "";
+  loserNotes.value = result.loser_notes || "";
+  tradeoffNotes.value = result.tradeoff_notes || "";
+  justification.value = (result.justification || "")
+    .replace(/[–—]/g, ",")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function autoEvaluate() {
+  const key = (apiKeyInput.value || "").trim();
+  if (!key) {
+    setStatus("Add your Anthropic API key first.");
+    apiKeyInput.focus();
+    return;
+  }
+  localStorage.setItem("hydraApiKey", key);
+
+  const prompt = promptText.value.trim();
+  if (!prompt) {
+    setStatus("Add the prompt first.");
+    return;
+  }
+
+  const button = document.querySelector("#autoEval");
+  button.disabled = true;
+  setStatus("Reading images...");
+
+  let images;
+  try {
+    const [input, a, b] = await Promise.all([
+      toImageBlock("input"),
+      toImageBlock("a"),
+      toImageBlock("b"),
+    ]);
+    if (!a || !b) {
+      setStatus("Need Response A and Response B images.");
+      button.disabled = false;
+      return;
+    }
+    images = { input, a, b };
+  } catch (error) {
+    console.error(error);
+    setStatus("Could not read an image. For local files, paste the image URLs instead.");
+    button.disabled = false;
+    return;
+  }
+
+  const content = [];
+  if (images.input) {
+    content.push({ type: "text", text: "INPUT IMAGE (the original to be edited):" });
+    content.push(images.input);
+  }
+  content.push({ type: "text", text: "RESPONSE A:" });
+  content.push(images.a);
+  content.push({ type: "text", text: "RESPONSE B:" });
+  content.push(images.b);
+  content.push({
+    type: "text",
+    text: `PROMPT (the requested edit):\n${prompt}\n\nEvaluate Response A against Response B for this prompt, following the rules. Return only the structured fields.`,
+  });
+
+  setStatus("Asking Claude to evaluate...");
+  try {
+    const response = await fetch(ANTHROPIC_URL, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 6000,
+        thinking: { type: "adaptive" },
+        system: SYSTEM_PROMPT,
+        output_config: { format: { type: "json_schema", schema: RATING_SCHEMA } },
+        messages: [{ role: "user", content }],
+      }),
+    });
+
+    if (!response.ok) {
+      const detail = await response.text();
+      console.error("Anthropic error:", detail);
+      setStatus(`API error ${response.status}. Check the key, model, or console.`);
+      return;
+    }
+
+    const data = await response.json();
+    if (data.stop_reason === "refusal") {
+      setStatus("Claude declined to evaluate this one.");
+      return;
+    }
+    const textBlock = (data.content || []).find((item) => item.type === "text");
+    if (!textBlock) {
+      setStatus("No result returned.");
+      return;
+    }
+    applyResult(JSON.parse(textBlock.text));
+    setStatus("Claude filled the ratings and justification. Review before you submit.");
+  } catch (error) {
+    console.error(error);
+    setStatus("Request failed (network or CORS). Check the console.");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+apiKeyInput.value = localStorage.getItem("hydraApiKey") || "";
+apiKeyInput.addEventListener("change", () => {
+  localStorage.setItem("hydraApiKey", apiKeyInput.value.trim());
+});
+document.querySelector("#autoEval").addEventListener("click", autoEvaluate);
+
 document.querySelector("#parseTask").addEventListener("click", parseTask);
 document.querySelector("#extractChecklist").addEventListener("click", extractChecklist);
 document.querySelector("#makeJustification").addEventListener("click", makeJustification);
