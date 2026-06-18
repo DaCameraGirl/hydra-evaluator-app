@@ -1,0 +1,49 @@
+<svg viewBox="0 0 256 256" width="256" height="256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hydra Evaluator icon">
+  <defs>
+    <radialGradient id="bg" cx="28%" cy="110%" r="125%">
+      <stop offset="0%" stop-color="#15351c"/>
+      <stop offset="62%" stop-color="#0c1410"/>
+      <stop offset="100%" stop-color="#080a0f"/>
+    </radialGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="256" height="256" rx="46" fill="url(#bg)"/>
+  <rect x="8" y="8" width="240" height="240" rx="40" fill="none" stroke="#234029" stroke-width="4"/>
+  <g filter="url(#glow)">
+    <path d="M66 152 C74 78 112 76 128 142 C145 74 185 80 193 153" fill="none" stroke="#4ea636" stroke-width="22" stroke-linecap="round"/>
+    <ellipse cx="128" cy="171" rx="74" ry="36" fill="#69cf48"/>
+    <ellipse cx="128" cy="184" rx="48" ry="18" fill="#8ee86a"/>
+    <g transform="translate(64 116)">
+      <circle r="28" fill="#69cf48"/>
+      <circle cx="-9" cy="-7" r="7" fill="#ffffff"/>
+      <circle cx="10" cy="-7" r="7" fill="#ffffff"/>
+      <circle cx="-7" cy="-6" r="3.4" fill="#10240a"/>
+      <circle cx="12" cy="-6" r="3.4" fill="#10240a"/>
+      <path d="M-12 10 Q0 18 13 10" fill="none" stroke="#1d4b22" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(128 83)">
+      <circle r="31" fill="#7be35d"/>
+      <circle cx="-10" cy="-8" r="8" fill="#ffffff"/>
+      <circle cx="11" cy="-8" r="8" fill="#ffffff"/>
+      <circle cx="-8" cy="-7" r="3.7" fill="#10240a"/>
+      <circle cx="13" cy="-7" r="3.7" fill="#10240a"/>
+      <path d="M-13 12 Q0 21 14 12" fill="none" stroke="#1d4b22" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(193 118)">
+      <circle r="28" fill="#69cf48"/>
+      <circle cx="-9" cy="-7" r="7" fill="#ffffff"/>
+      <circle cx="10" cy="-7" r="7" fill="#ffffff"/>
+      <circle cx="-7" cy="-6" r="3.4" fill="#10240a"/>
+      <circle cx="12" cy="-6" r="3.4" fill="#10240a"/>
+      <path d="M-12 10 Q0 18 13 10" fill="none" stroke="#1d4b22" stroke-width="4" stroke-linecap="round"/>
+    </g>
+  </g>
+  <polyline points="36,61 78,45 100,59 138,32 164,45" fill="none" stroke="#b6ff43" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="53" y="229" font-family="Inter,Segoe UI,sans-serif" font-size="32" font-weight="900" fill="#89e051">HYDRA</text>
+</svg>
