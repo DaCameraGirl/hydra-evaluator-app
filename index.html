@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hydra evaluator</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="worktop" aria-label="Task setup">
+        <div class="brand">
+          <div>
+            <p class="kicker">Project Hydra</p>
+            <h1>Image rating helper</h1>
+          </div>
+          <button id="clearAll" class="ghost-button" type="button">Clear</button>
+        </div>
+
+        <label class="field">
+          <span>Paste full task text or just the prompt</span>
+          <textarea id="taskText" rows="7" placeholder="Paste the Hydra task here. The app will pull out the prompt and image links when it can."></textarea>
+        </label>
+
+        <div class="actions">
+          <button id="parseTask" class="primary-button" type="button">Pull prompt and links</button>
+          <button id="loadSample" class="secondary-button" type="button">Use current images</button>
+        </div>
+      </section>
+
+      <section class="prompt-panel" aria-label="Prompt">
+        <label class="field">
+          <span>Prompt</span>
+          <textarea id="promptText" rows="4" placeholder="Prompt goes here"></textarea>
+        </label>
+        <div class="prompt-tools">
+          <button id="extractChecklist" class="secondary-button" type="button">Make checklist</button>
+          <button id="copyPrompt" class="ghost-button" type="button">Copy prompt</button>
+        </div>
+        <ul id="checklist" class="checklist" aria-label="Prompt checklist"></ul>
+      </section>
+
+      <section class="image-grid" aria-label="Images">
+        <article class="image-card" data-slot="input">
+          <header>
+            <h2>Input</h2>
+            <button class="ghost-button small clear-slot" type="button">Clear</button>
+          </header>
+          <div class="dropzone" data-target="input">
+            <img id="imgInput" alt="Input preview">
+            <span>Drop image or paste URL</span>
+          </div>
+          <input id="urlInput" class="url-box" type="url" placeholder="Input image URL">
+        </article>
+
+        <article class="image-card" data-slot="a">
+          <header>
+            <h2>Response A</h2>
+            <button class="ghost-button small clear-slot" type="button">Clear</button>
+          </header>
+          <div class="dropzone" data-target="a">
+            <img id="imgA" alt="Response A preview">
+            <span>Drop image or paste URL</span>
+          </div>
+          <input id="urlA" class="url-box" type="url" placeholder="Response A image URL">
+        </article>
+
+        <article class="image-card" data-slot="b">
+          <header>
+            <h2>Response B</h2>
+            <button class="ghost-button small clear-slot" type="button">Clear</button>
+          </header>
+          <div class="dropzone" data-target="b">
+            <img id="imgB" alt="Response B preview">
+            <span>Drop image or paste URL</span>
+          </div>
+          <input id="urlB" class="url-box" type="url" placeholder="Response B image URL">
+        </article>
+      </section>
+
+      <section class="ratings" aria-label="Ratings">
+        <div class="section-title">
+          <div>
+            <p class="kicker">Selections</p>
+            <h2>Ratings</h2>
+          </div>
+          <button id="copyRatings" class="ghost-button" type="button">Copy ratings</button>
+        </div>
+        <div id="ratingRows" class="rating-rows"></div>
+      </section>
+
+      <section class="notes-panel" aria-label="Notes">
+        <div class="section-title">
+          <div>
+            <p class="kicker">Fast notes</p>
+            <h2>Specific reasons</h2>
+          </div>
+        </div>
+
+        <div class="note-grid">
+          <label class="field">
+            <span>What the better response does right</span>
+            <textarea id="winnerNotes" rows="4" placeholder="Example: keeps the original room, changes the chair to maroon, and adds wheels"></textarea>
+          </label>
+          <label class="field">
+            <span>What the weaker response gets wrong</span>
+            <textarea id="loserNotes" rows="4" placeholder="Example: changes the whole scene, removes extra chairs, and turns it into a recliner"></textarea>
+          </label>
+          <label class="field">
+            <span>Tradeoff or shared issue</span>
+            <textarea id="tradeoffNotes" rows="3" placeholder="Example: both add coffee even though the original cup was empty"></textarea>
+          </label>
+        </div>
+
+        <div class="chips" aria-label="Common defect chips">
+          <button type="button" data-note="changes the whole scene too much">changes whole scene</button>
+          <button type="button" data-note="does not preserve the original subject">different subject</button>
+          <button type="button" data-note="misses one of the requested changes">misses requested change</button>
+          <button type="button" data-note="adds extra objects that were not asked for">adds extra objects</button>
+          <button type="button" data-note="keeps the original image layout much closer">keeps layout closer</button>
+          <button type="button" data-note="looks less natural around the edited area">less natural edit</button>
+        </div>
+      </section>
+
+      <section class="output-panel" aria-label="Justification output">
+        <div class="section-title">
+          <div>
+            <p class="kicker">Submit text</p>
+            <h2>Justification</h2>
+          </div>
+          <div class="actions tight">
+            <button id="makeJustification" class="primary-button" type="button">Draft</button>
+            <button id="copyJustification" class="secondary-button" type="button">Copy</button>
+          </div>
+        </div>
+        <textarea id="justification" rows="6" placeholder="Your 2 to 5 sentence justification will appear here."></textarea>
+        <p id="status" class="status" role="status"></p>
+      </section>
+    </main>
+
+    <dialog id="previewDialog">
+      <button id="closePreview" class="ghost-button" type="button">Close</button>
+      <img id="previewImage" alt="Expanded preview">
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
