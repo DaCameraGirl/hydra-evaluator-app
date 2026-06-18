@@ -5,8 +5,10 @@ param(
 $ErrorActionPreference = "Stop"
 
 $appRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$appFolderName = Split-Path -Leaf $appRoot
+$serveRoot = Split-Path -Parent $appRoot
 $port = if ($env:HYDRA_EVALUATOR_PORT) { [int]$env:HYDRA_EVALUATOR_PORT } else { 8765 }
-$url = "http://127.0.0.1:$port/index.html"
+$url = "http://127.0.0.1:$port/$appFolderName/index.html"
 
 function Test-LocalPort {
   param([int]$Port)
@@ -31,10 +33,10 @@ if (-not (Test-LocalPort -Port $port)) {
 
   if ($python) {
     $args = "-m http.server $port --bind 127.0.0.1"
-    Start-Process -FilePath $python.Source -ArgumentList $args -WorkingDirectory $appRoot -WindowStyle Hidden | Out-Null
+    Start-Process -FilePath $python.Source -ArgumentList $args -WorkingDirectory $serveRoot -WindowStyle Hidden | Out-Null
   } elseif ($py) {
     $args = "-3.11 -m http.server $port --bind 127.0.0.1"
-    Start-Process -FilePath $py.Source -ArgumentList $args -WorkingDirectory $appRoot -WindowStyle Hidden | Out-Null
+    Start-Process -FilePath $py.Source -ArgumentList $args -WorkingDirectory $serveRoot -WindowStyle Hidden | Out-Null
   } else {
     Start-Process (Join-Path $appRoot "index.html")
     exit 0

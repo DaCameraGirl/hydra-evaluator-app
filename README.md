@@ -53,18 +53,19 @@ everything else. If a response regenerates the scene, it failed the job.
 No install. No bundler. No build step.
 
 ```powershell
-cd "C:\Users\enter\OneDrive\Desktop\Project Hydra\hydra-evaluator-app"
+cd "C:\Users\enter\OneDrive\Desktop\Project Hydra"
 python -m http.server 8765 --bind 127.0.0.1
 ```
 
 Open:
 
 ```text
-http://127.0.0.1:8765/index.html
+http://127.0.0.1:8765/hydra-evaluator-app/index.html
 ```
 
-You can also open `index.html` directly, but serving the folder through
-localhost is more reliable when working with local image files.
+You can also open `index.html` directly, but serving the `Project Hydra` folder
+through localhost is more reliable when working with the sample image files that
+live beside this repo.
 
 ## Desktop launcher
 
@@ -107,6 +108,9 @@ server-side proxy in front so the key never sits in someone else's browser.
 
 ```powershell
 node --check app.js
+node scripts/smoke-test.mjs
 ```
 
-That is the same syntax check used by CI.
+The smoke test opens the app in headless Edge, loads the sample images, verifies
+the image payloads, mocks Claude, and checks that all rating categories and the
+justification are filled correctly.

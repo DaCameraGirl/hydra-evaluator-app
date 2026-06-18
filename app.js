@@ -57,7 +57,7 @@ function setStatus(message) {
 
 function cleanText(value) {
   return value
-    .replace(/[\u2013\u2014]/g, ",")
+    .replace(/\s*[\u2013\u2014]\s*/g, ", ")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -219,7 +219,7 @@ function makeJustification() {
 
   justification.value = lines
     .join(" ")
-    .replace(/[\u2013\u2014]/g, ",")
+    .replace(/\s*[\u2013\u2014]\s*/g, ", ")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -367,7 +367,13 @@ async function toImageBlock(slotName) {
     return { type: "image", source: { type: "url", url: src } };
   }
   const response = await fetch(src);
+  if (!response.ok) {
+    throw new Error(`Could not load image from ${src}: HTTP ${response.status}`);
+  }
   const blob = await response.blob();
+  if (blob.type && !blob.type.startsWith("image/")) {
+    throw new Error(`Loaded file is not an image: ${blob.type}`);
+  }
   const dataUrl = await new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
@@ -405,7 +411,7 @@ function applyResult(result) {
   loserNotes.value = result.loser_notes || "";
   tradeoffNotes.value = result.tradeoff_notes || "";
   justification.value = (result.justification || "")
-    .replace(/[–—]/g, ",")
+    .replace(/\s*[\u2013\u2014]\s*/g, ", ")
     .replace(/\s+/g, " ")
     .trim();
 }
