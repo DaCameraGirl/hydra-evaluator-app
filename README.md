@@ -10,9 +10,11 @@ justification.
 1. **Manual** — paste the task, look at the images, click the rating buttons,
    jot quick notes, and the app stitches them into a clean justification (em
    dashes stripped).
-2. **Auto-evaluate with Claude** — drop in an Anthropic API key and let
-   `claude-opus-4-8` read the three images, score the five axes, and draft the
-   justification for you. You review and adjust before submitting.
+2. **Auto-evaluate with Claude** — drop in an Anthropic API key, pick a model,
+   and let Claude read the three images, score the five axes, and draft the
+   justification for you. You review and adjust before submitting. Choose
+   **Opus 4.8** for the sharpest judgment (~6-8 cents/task) or **Haiku 4.5** for
+   a cheaper first-pass draft (~1 cent/task); both can see the images.
 
 ## Running it
 

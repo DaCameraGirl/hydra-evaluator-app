@@ -315,6 +315,7 @@ function clearAll() {
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const MODEL = "claude-opus-4-8";
 const apiKeyInput = document.querySelector("#apiKey");
+const modelSelect = document.querySelector("#modelSelect");
 
 const SYSTEM_PROMPT = [
   "You are an expert evaluator for an image-editing model comparison.",
@@ -462,7 +463,20 @@ async function autoEvaluate() {
     text: `PROMPT (the requested edit):\n${prompt}\n\nEvaluate Response A against Response B for this prompt, following the rules. Return only the structured fields.`,
   });
 
-  setStatus("Asking Claude to evaluate...");
+  const model = (modelSelect && modelSelect.value) || MODEL;
+  const body = {
+    model,
+    max_tokens: 6000,
+    system: SYSTEM_PROMPT,
+    output_config: { format: { type: "json_schema", schema: RATING_SCHEMA } },
+    messages: [{ role: "user", content }],
+  };
+  // Adaptive thinking is supported on Opus/Sonnet 4.6+, not on Haiku 4.5.
+  if (!/haiku/i.test(model)) {
+    body.thinking = { type: "adaptive" };
+  }
+
+  setStatus(`Asking ${model.includes("haiku") ? "Haiku" : "Opus"} to evaluate...`);
   try {
     const response = await fetch(ANTHROPIC_URL, {
       method: "POST",
@@ -472,14 +486,7 @@ async function autoEvaluate() {
         "anthropic-version": "2023-06-01",
         "anthropic-dangerous-direct-browser-access": "true",
       },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 6000,
-        thinking: { type: "adaptive" },
-        system: SYSTEM_PROMPT,
-        output_config: { format: { type: "json_schema", schema: RATING_SCHEMA } },
-        messages: [{ role: "user", content }],
-      }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
@@ -513,6 +520,12 @@ apiKeyInput.value = localStorage.getItem("hydraApiKey") || "";
 apiKeyInput.addEventListener("change", () => {
   localStorage.setItem("hydraApiKey", apiKeyInput.value.trim());
 });
+if (modelSelect) {
+  modelSelect.value = localStorage.getItem("hydraModel") || modelSelect.value;
+  modelSelect.addEventListener("change", () => {
+    localStorage.setItem("hydraModel", modelSelect.value);
+  });
+}
 document.querySelector("#autoEval").addEventListener("click", autoEvaluate);
 
 document.querySelector("#parseTask").addEventListener("click", parseTask);
