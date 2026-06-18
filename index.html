@@ -26,6 +26,15 @@
           <button id="parseTask" class="primary-button" type="button">Pull prompt and links</button>
           <button id="loadSample" class="secondary-button" type="button">Use current images</button>
         </div>
+
+        <label class="field">
+          <span>Anthropic API key (stored only in this browser, never sent anywhere but Anthropic)</span>
+          <input id="apiKey" class="url-box" type="password" placeholder="sk-ant-...">
+        </label>
+
+        <div class="actions">
+          <button id="autoEval" class="primary-button" type="button">Auto-evaluate with Claude</button>
+        </div>
       </section>
 
       <section class="prompt-panel" aria-label="Prompt">
