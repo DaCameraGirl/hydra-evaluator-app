@@ -45,11 +45,13 @@ const justification = document.querySelector("#justification");
 const statusLine = document.querySelector("#status");
 const previewDialog = document.querySelector("#previewDialog");
 const previewImage = document.querySelector("#previewImage");
+let statusTimer = 0;
 
-function setStatus(message) {
+function setStatus(message, options = {}) {
+  window.clearTimeout(statusTimer);
   statusLine.textContent = message;
-  if (message) {
-    window.setTimeout(() => {
+  if (message && !options.sticky) {
+    statusTimer = window.setTimeout(() => {
       if (statusLine.textContent === message) statusLine.textContent = "";
     }, 2600);
   }
@@ -359,6 +361,29 @@ const RATING_SCHEMA = {
   ],
 };
 
+function apiErrorDetail(detail) {
+  const trimmed = String(detail || "").trim();
+  if (!trimmed) return "";
+  try {
+    const parsed = JSON.parse(trimmed);
+    return parsed.error?.message || parsed.message || trimmed;
+  } catch {
+    return trimmed;
+  }
+}
+
+function anthropicErrorMessage(status, detail) {
+  const message = apiErrorDetail(detail);
+  const suffix = message ? ` ${message}` : "";
+  if (status === 400) return `API error 400. The request shape was rejected.${suffix}`;
+  if (status === 401) return `API error 401. Use an Anthropic Console API key, not a Claude app login or subscription.${suffix}`;
+  if (status === 403) return `API error 403. Check Anthropic API billing, organization access, or model access.${suffix}`;
+  if (status === 404) return `API error 404. The selected Claude model is not available on this key.${suffix}`;
+  if (status === 429) return `API error 429. Rate limit or API credit limit hit.${suffix}`;
+  if (status >= 500) return `Anthropic server error ${status}. Try again or switch to Haiku/Sonnet.${suffix}`;
+  return `API error ${status}.${suffix}`;
+}
+
 async function toImageBlock(slotName) {
   const slot = slots[slotName];
   const src = slot.img.getAttribute("src");
@@ -419,7 +444,7 @@ function applyResult(result) {
 async function autoEvaluate() {
   const key = (apiKeyInput.value || "").trim();
   if (!key) {
-    setStatus("Add your Anthropic API key first.");
+    setStatus("Add an Anthropic Console API key first. Manual scoring still works without one.", { sticky: true });
     apiKeyInput.focus();
     return;
   }
@@ -498,7 +523,7 @@ async function autoEvaluate() {
     if (!response.ok) {
       const detail = await response.text();
       console.error("Anthropic error:", detail);
-      setStatus(`API error ${response.status}. Check the key, model, or console.`);
+      setStatus(anthropicErrorMessage(response.status, detail), { sticky: true });
       return;
     }
 
@@ -516,7 +541,7 @@ async function autoEvaluate() {
     setStatus("Claude filled the ratings and justification. Review before you submit.");
   } catch (error) {
     console.error(error);
-    setStatus("Request failed (network or CORS). Check the console.");
+    setStatus("Request failed before Anthropic replied. Start the app through localhost and check the browser console/network tab.", { sticky: true });
   } finally {
     button.disabled = false;
   }

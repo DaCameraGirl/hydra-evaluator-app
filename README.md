@@ -34,15 +34,23 @@ want control. Claude when you want a fast second set of eyes.
 
 ## Auto-evaluate mode
 
+Manual scoring works without any API key. Auto-evaluate needs an Anthropic
+Console API key with API billing enabled. A Claude Pro/Max subscription is not
+the same thing as API billing.
+
 The Claude button sends the prompt and images to Anthropic's Messages API with a
 strict JSON response shape. The result maps back into the rating buttons, note
 fields, and justification box so you can review before submitting.
+
+DeepSeek keys are not useful for this app's auto-evaluate mode because
+DeepSeek's Anthropic-compatible API does not support image content blocks.
 
 Available model choices in the app:
 
 | Model | Use it when |
 |---|---|
 | `claude-opus-4-8` | You want the sharpest image-edit judgment and can spend more per task |
+| `claude-sonnet-4-6` | You want a balanced option between quality and cost |
 | `claude-haiku-4-5` | You want a cheaper first-pass draft to edit yourself |
 
 The grading rule is simple: a good edit makes the requested change and preserves
@@ -97,8 +105,8 @@ scripts/         Windows launcher and Desktop shortcut installer
 
 ## API key safety
 
-The Anthropic API key is entered at runtime and stored only in this browser's
-`localStorage`. It is sent directly to Anthropic with the
+The Anthropic Console API key is entered at runtime and stored only in this
+browser's `localStorage`. It is sent directly to Anthropic with the
 `anthropic-dangerous-direct-browser-access` header.
 
 Do not host this app publicly as-is. If this becomes a hosted app, put a small
