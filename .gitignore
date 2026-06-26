@@ -1,21 +1,24 @@
-# Dependencies (none yet, but guard against future tooling)
-node_modules/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# OS / editor cruft
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-Thumbs.db
-*.swp
-.vscode/
-.idea/
-
-# Local secrets — the app stores the API key in browser localStorage,
-# never on disk, but guard against accidental commits of any env files.
-.env
-.env.*
-
-# Image assets live outside the repo (the 285 MB Project Hydra dump).
-# Don't pull them in if someone drops samples into the app folder.
-*.png
-*.jpg
-*.jpeg
-*.webp
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
