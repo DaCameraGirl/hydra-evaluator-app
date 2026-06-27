@@ -43,7 +43,7 @@ Local Project Hydra image-response evaluation helper. Paste a Hydra task, load t
 Built by Angela Hudson / DaCameraGirl.
 
 <p align="center"><img src="docs/readme-divider.svg" width="720" alt="" /></p>
-<p align="center"><img src="https://capsule-render.vercel.app/api?type=rect&color=070b14&height=50&section=header&text=What%20It%20Does&fontSize=22&fontColor=e6edf3" width="720" alt="What It Does" /></p>
+<p align="center"><img src="https://capsule-render.vercel.app/api?type=waving&color=0:070b14,100:12102a&height=50&section=header&text=What%20It%20Does&fontSize=22&fontColor=e6edf3&animation=twinkling" width="720" alt="What It Does" /></p>
 
 
 - **Prompt parsing**: paste the full task text and pull out the prompt plus storage image links when possible.
@@ -54,7 +54,7 @@ Built by Angela Hudson / DaCameraGirl.
 - **No em dashes**: generated text replaces em dashes so it matches Angela's requested style.
 
 <p align="center"><img src="docs/readme-divider.svg" width="720" alt="" /></p>
-<p align="center"><img src="https://capsule-render.vercel.app/api?type=rect&color=070b14&height=50&section=header&text=Evaluation%20Notes&fontSize=22&fontColor=e6edf3" width="720" alt="Evaluation Notes" /></p>
+<p align="center"><img src="https://capsule-render.vercel.app/api?type=waving&color=0:070b14,100:12102a&height=50&section=header&text=Evaluation%20Notes&fontSize=22&fontColor=e6edf3&animation=twinkling" width="720" alt="Evaluation Notes" /></p>
 
 
 This app does not automatically judge image quality yet. It is a fast local workbench for careful human review. Treat it as a helper for:
@@ -65,7 +65,7 @@ This app does not automatically judge image quality yet. It is a fast local work
 - writing specific, plain-language justifications under time pressure
 
 <p align="center"><img src="docs/readme-divider.svg" width="720" alt="" /></p>
-<p align="center"><img src="https://capsule-render.vercel.app/api?type=rect&color=070b14&height=50&section=header&text=Tech%20Stack&fontSize=22&fontColor=e6edf3" width="720" alt="Tech Stack" /></p>
+<p align="center"><img src="https://capsule-render.vercel.app/api?type=waving&color=0:070b14,100:12102a&height=50&section=header&text=Tech%20Stack&fontSize=22&fontColor=e6edf3&animation=twinkling" width="720" alt="Tech Stack" /></p>
 
 
 - React 19 + TypeScript + Vite
@@ -76,7 +76,7 @@ This app does not automatically judge image quality yet. It is a fast local work
 No backend, no database, no API keys.
 
 <p align="center"><img src="docs/readme-divider.svg" width="720" alt="" /></p>
-<p align="center"><img src="https://capsule-render.vercel.app/api?type=rect&color=070b14&height=50&section=header&text=Run%20Locally&fontSize=22&fontColor=e6edf3" width="720" alt="Run Locally" /></p>
+<p align="center"><img src="https://capsule-render.vercel.app/api?type=waving&color=0:070b14,100:12102a&height=50&section=header&text=Run%20Locally&fontSize=22&fontColor=e6edf3&animation=twinkling" width="720" alt="Run Locally" /></p>
 
 
 ```bash
@@ -93,7 +93,7 @@ npm run build
 ```
 
 <p align="center"><img src="docs/readme-divider.svg" width="720" alt="" /></p>
-<p align="center"><img src="https://capsule-render.vercel.app/api?type=rect&color=070b14&height=50&section=header&text=CI%20and%20Deploy&fontSize=22&fontColor=e6edf3" width="720" alt="CI and Deploy" /></p>
+<p align="center"><img src="https://capsule-render.vercel.app/api?type=waving&color=0:070b14,100:12102a&height=50&section=header&text=CI%20and%20Deploy&fontSize=22&fontColor=e6edf3&animation=twinkling" width="720" alt="CI and Deploy" /></p>
 
 
 Pull requests and pushes to `main` run:
@@ -113,7 +113,7 @@ The Vite `base` is `/hydra-evaluator-app/` to match the repository name.
 Pushing to `main` triggers `.github/workflows/deploy-pages.yml`, which builds the app and publishes `dist/` to GitHub Pages.
 
 <p align="center"><img src="docs/readme-divider.svg" width="720" alt="" /></p>
-<p align="center"><img src="https://capsule-render.vercel.app/api?type=rect&color=070b14&height=50&section=header&text=Repo%20Workflow&fontSize=22&fontColor=e6edf3" width="720" alt="Repo Workflow" /></p>
+<p align="center"><img src="https://capsule-render.vercel.app/api?type=waving&color=0:070b14,100:12102a&height=50&section=header&text=Repo%20Workflow&fontSize=22&fontColor=e6edf3&animation=twinkling" width="720" alt="Repo Workflow" /></p>
 
 
 - Work on feature branches.
@@ -123,7 +123,7 @@ Pushing to `main` triggers `.github/workflows/deploy-pages.yml`, which builds th
 - Use issues for follow-up automation, vision-model support, and rating workflow improvements.
 
 <p align="center"><img src="docs/readme-divider.svg" width="720" alt="" /></p>
-<p align="center"><img src="https://capsule-render.vercel.app/api?type=rect&color=070b14&height=50&section=header&text=License&fontSize=22&fontColor=e6edf3" width="720" alt="License" /></p>
+<p align="center"><img src="https://capsule-render.vercel.app/api?type=waving&color=0:070b14,100:12102a&height=50&section=header&text=License&fontSize=22&fontColor=e6edf3&animation=twinkling" width="720" alt="License" /></p>
 
 
 Copyright (c) 2026 Angela Hudson. All Rights Reserved. See [LICENSE](LICENSE).
